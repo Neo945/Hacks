@@ -46,6 +46,14 @@ const CompanySchema = new Schema({
         minLength: 12,
         validate: [isMobilePhone, 'Invalid Phone number'],
     },
+    startFrom: {
+        type: Date,
+        default: Date.now,
+    },
+    openTill: {
+        type: Date,
+        required: [true, 'Please provide an open till date'],
+    },
 }, {
     timestamps: true,
 });
