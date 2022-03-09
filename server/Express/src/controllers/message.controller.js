@@ -61,7 +61,7 @@ module.exports = {
         }
         res.send({ message, user: req.user.username });
     },
-    getMessage: async (req, res) => {
+    getRoomMessages: async (req, res) => {
         const room = await Room.findById(req.params.id).populate('messages');
         res.send({ messages: room.messages });
     },

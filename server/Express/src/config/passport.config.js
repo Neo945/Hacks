@@ -20,7 +20,7 @@ passport.use(
             callbackURL: 'http://localhost:5000/api/auth/google/redirect',
         },
         async (access, refresh, email, done) => {
-            const existingUser = await User.findOne({ email: email.emails[0].value });
+            const existingUser = await BaseUser.findOne({ email: email.emails[0].value });
             if (existingUser) {
                 done(null, existingUser);
             } else {

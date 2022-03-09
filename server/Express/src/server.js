@@ -65,7 +65,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(xss());
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 // gzip compression
 app.use(compression());

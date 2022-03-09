@@ -13,7 +13,7 @@ module.exports = {
             res.status(200).json({ message: 'success', user });
         });
     },
-    createUserForExistingBaseUser: (req, res) => {
+    register: (req, res) => {
         errorHandler(req, res, async () => {
             uploadSingleImage(req, res, async (err) => {
                 const user = await BaseUser.findOne({ email: req.body.email });

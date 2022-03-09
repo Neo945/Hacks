@@ -12,13 +12,10 @@ const TimeslotSchema = new Schema({
         required: [true, 'Please fill the slot'],
         enum: ['1', '2', '3', '4', '5'],
     },
-    user: {
+    application: {
         type: Schema.Types.ObjectId,
-        ref: 'recruite',
-    },
-    company: {
-        type: Schema.Types.ObjectId,
-        ref: 'company',
+        ref: 'Application',
+        required: [true, 'Please provide an application'],
     },
     room: {
         type: String,

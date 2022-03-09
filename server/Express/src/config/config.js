@@ -20,6 +20,17 @@ const schema = Joi.object()
         USER_EMAIL: Joi.string().required().description('Email of user'),
         USER_PASSWORD: Joi.string().required().description('Email password'),
         NODE_ENV: Joi.string().required().description('Environment'),
+        type: Joi.string().required(),
+        project_id: Joi.string().required(),
+        dialogFlowSessionID: Joi.string().default('bot-session'),
+        private_key_id: Joi.string().required(),
+        dialogFlowSessionLanguageCode: Joi.string().default('en-US'),
+        private_key: Joi.string().required(),
+        client_email: Joi.string().required(),
+        auth_uri: Joi.string().required(),
+        token_uri: Joi.string().required(),
+        auth_provider_x509_cert_url: Joi.string().required(),
+        client_x509_cert_url: Joi.string().required(),
     })
     .unknown();
 
