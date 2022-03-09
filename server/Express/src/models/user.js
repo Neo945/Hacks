@@ -26,7 +26,6 @@ const BaseUserSchema = new Schema(
             trim: true,
             required: [true, 'Please fill the password'],
             validate: [isStrongPassword, 'not a strong password'],
-            unique: true,
             minlength: [10, 'Password Length less than 10'],
         },
         email: {
@@ -70,7 +69,7 @@ BaseUserSchema.statics.login = async function (email, password) {
 
 BaseUserSchema.statics.generateEmailVerificationToken = async function (_id) {
     if (await this.exists({ _id })) {
-        const token = await bcrypt.hash(_id, await bcrypt.genSalt());
+        const token = await bcrypt.hash(_id.toString(), '$2b$10$q8FYXO/z.XXGEce05HIdce');
         return token;
     }
     return null;
@@ -122,6 +121,7 @@ const RecruiteSchema = new Schema({
     user: {
         type: mongoose.Types.ObjectId,
         ref: 'BaseUser',
+        required: [true, 'Please provide a user'],
     },
     phone: {
         type: String,
@@ -179,10 +179,6 @@ const RecruiterSchema = new Schema({
         minLength: 12,
         validate: [isMobilePhone, 'Invalid Phone number'],
     },
-    isRecruiter: {
-        type: Boolean,
-        default: true,
-    },
     company: {
         type: mongoose.Types.ObjectId,
         ref: 'Company',
@@ -200,7 +196,7 @@ const RecruiterSchema = new Schema({
 });
 
 const BaseUser = mongoose.model('BaseUser', BaseUserSchema);
-const Recruite = mongoose.model('User', RecruiteSchema);
+const Recruite = mongoose.model('Recruite', RecruiteSchema);
 const Recruiter = mongoose.model('Recruiter', RecruiterSchema);
 
 module.exports = {

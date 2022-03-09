@@ -2,14 +2,14 @@
 const express = require('express');
 const http = require('http');
 const path = require('path');
-const compression = require('compression');
-const xss = require('xss-clean');
-const mongoSanitize = require('mongo-sanitize');
+// const compression = require('compression');
+// const xss = require('xss-clean');
+// const mongoSanitize = require('mongo-sanitize');
 require('./config/passport.config');
 const cp = require('cookie-parser');
 const cs = require('cookie-session');
 const passport = require('passport');
-const helmet = require('helmet');
+// const helmet = require('helmet');
 require('./config/s3.config');
 const morgan = require('./config/morgan.config');
 const env = require('./config/config');
@@ -37,7 +37,7 @@ app.use(
         keys: env.SECRET_KEY,
     })
 );
-app.use(helmet());
+// app.use(helmet());
 
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'jsx');
@@ -48,7 +48,7 @@ app.all('*', (req, res, next) => {
     if (!req.get('Origin')) return next();
     res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.set('Access-Control-Allow-Credentials', 'true');
-    res.set('Access-Control-Allow-Methods', 'GET,POST', 'PUT', 'DELETE');
+    res.set('Access-Control-Allow-Methods', 'GET','POST', 'PUT', 'DELETE');
     res.set('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type');
     if (req.method === 'OPTIONS') return res.send(200);
     next();
@@ -64,13 +64,13 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan.successHandler);
 }
 
-app.use(xss());
+// app.use(xss());
 // app.use(mongoSanitize());
 
 // gzip compression
-app.use(compression());
+// app.use(compression());
 
-// app.use(require('./middleware/UserAuth.middleware'));
+app.use(require('./middleware/UserAuth.middleware'));
 
 // app.get('/', async (req, res) => {
 //     //     res.render('index', { name: 'Hello' });

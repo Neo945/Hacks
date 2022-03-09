@@ -25,7 +25,7 @@ module.exports = {
             return res.status(401).send({ message: 'Unauthorized' });
         }
         const requestData = requestMessage(req.body.message, req.body.language);
-        const { room, company } = req.body;
+        const { room } = req.body;
         const response = await sendRequest(requestData);
         const message = await Message.create({
             ...req.body,
@@ -71,7 +71,7 @@ module.exports = {
         }
         const requestData = requestEvent(req.body.event, req.body.language);
         const response = await sendRequest(requestData);
-        const { room, company } = req.body;
+        const { room } = req.body;
 
         const message = await Message.create({
             user: req.user._id,
