@@ -156,7 +156,7 @@ module.exports = {
                     recruite: req.user._id,
                     company: c,
                 });
-                res.redirect('http://localhost:3000/join');
+                res.redirect('http://localhost:3000/calander');
             } else {
                 res.json({ message: 'Token is not valid' });
             }
