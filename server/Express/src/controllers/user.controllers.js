@@ -132,7 +132,7 @@ module.exports = {
                 // const { recruite } = req.body;
                 const token = await BaseUser.generateEmailVerificationToken(req.user ? req.user._id : req.body._id);
                 if (token) {
-                    const url = `${URL}/join?token=${token}&c=${req.body.company._id}`;
+                    const url = `${'http:\\localhost:5000/api/auth'}/join?token=${token}&c=${req.body.company._id}`;
                     const message = `<h1>Please Join using and select the time slot</h1>
                         <p>Click on the link below to verify your email</p>
                         <a href="${url}">${url}</a>`;
@@ -151,6 +151,7 @@ module.exports = {
         errorHandler(req, res, async () => {
             const { token, c } = req.query;
             if (await BaseUser.verifyEmailToken(req.user._id, token)) {
+                console.log(c);
                 await Application.create({
                     recruite: req.user._id,
                     company: c,

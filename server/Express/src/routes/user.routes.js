@@ -12,7 +12,7 @@ router.post('/update/password', view.updatePassword);
 router.post('/login', view.login);
 router.post('/create/company', view.createCompany);
 router.post('/request/join', view.sendJoinRequest);
-router.post('/join', view.sendJoinRequest);
+router.get('/join', view.joinRequestRedirect);
 
 router.get(
     '/google',

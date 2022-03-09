@@ -69,26 +69,17 @@ BaseUserSchema.statics.login = async function (email, password) {
 
 BaseUserSchema.statics.generateEmailVerificationToken = async function (_id) {
     if (await this.exists({ _id })) {
-        const token = await bcrypt.hash(_id.toString(), '$2b$10$q8FYXO/z.XXGEce05HIdce');
+        const token = await bcrypt.hash(_id.toString(), await bcrypt.genSalt());
+        // console.log(token, _id.toString(), await bcrypt.compare(_id.toString(), token));
         return token;
     }
     return null;
 };
 
 BaseUserSchema.statics.verifyEmailToken = async function (id, token) {
-    const user = await this.findById(id);
-    if (await bcrypt.compare(token, user._id)) {
-        user.isVerified = true;
-        user.save();
-        wsServer.on('connect', (connection) => {
-            setTimeout(() => {
-                connection.send({ success: true, message: 'Account verified' });
-            }, 5000);
-        });
-
-        return true;
-    }
-    return false;
+    const valid = await bcrypt.compare(id.toString(), token);
+    console.log(valid);
+    return valid;
 };
 
 BaseUserSchema.statics.updatePassword = async function (id, oldPass, newPass) {

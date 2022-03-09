@@ -3,7 +3,10 @@ const env = require('./config');
 
 async function transport(to, subject, text) {
     const transporter = await nodemailer.createTransport({
-        service: env.EMAIL_SERVICE,
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        requireTLS: true,
         auth: {
             user: env.USER_EMAIL,
             pass: env.USER_PASSWORD,
