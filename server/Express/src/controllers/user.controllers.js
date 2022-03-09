@@ -1,30 +1,42 @@
-const bcrypt = require('bcrypt');
-const { User, BaseUser } = require('../models/user');
+const { Recruite, Recruiter, BaseUser } = require('../models/user');
 const { errorHandler } = require('../utils/errorHandler');
 const transport = require('../config/mailer.config');
 const { URL } = require('../server');
 const { uploadSingleImage } = require('../config/s3.config');
+const Company = require('../models/company');
+const Application = require('../models/application');
 
 module.exports = {
     getUser: (req, res) => {
         errorHandler(req, res, async () => {
-            const user = await User.findOne({ user: req.user._id }).populate('user', '-password');
+            const user = await Recruite.findOne({ user: req.user._id }).populate('BaseUser', '-password');
             res.status(200).json({ message: 'success', user });
         });
     },
     createUserForExistingBaseUser: (req, res) => {
         errorHandler(req, res, async () => {
-            if (req.body.user.isVerified) {
-                uploadSingleImage(req, res, async (err) => {
-                    if (err) return res.status(500).json({ error: err });
-                    const newUserAccount = await User.create({
+            uploadSingleImage(req, res, async (err) => {
+                const user = await BaseUser.findOne({ email: req.body.email });
+                if (user) {
+                    return res.status(400).json({ message: 'User already exist' });
+                }
+                if (err) return res.status(500).json({ error: err });
+                if (!req.body.isReqcruiter) {
+                    const newUserAccount = await Recruite.create({
                         ...req.body,
-                        user: req.body.user._id,
+                        user: user._id,
                         image: req.file.location,
-                    });
+                    });    
                     return res.status(201).json({ message: 'success', user: { ...newUserAccount, password: null } });
+                } 
+                const newUserAccount = await Recruiter.create({
+                    ...req.body,
+                    user: user._id,
+                    image: req.file.location,
+                    company: req.body.company._id,
                 });
-            } else res.status(400).json({ message: 'User is not varified, first verify and then create the user account' });
+                return res.status(201).json({ message: 'success', user: { ...newUserAccount, password: null } });
+            });
         });
     },
     updatePassword: (req, res) => {
@@ -36,26 +48,6 @@ module.exports = {
                 return res.status(400).json({ message: 'old password is not correct' });
             }
             return res.status(400).json({ message: 'old password is not correct' });
-        });
-    },
-    registerUser: (req, res) => {
-        errorHandler(req, res, async () => {
-            let user = await BaseUser.findOne({ email: req.body.email });
-            if (!user) {
-                user = await BaseUser.create({ ...req.body, password: await bcrypt.genSalt(10) });
-            }
-            const token = await BaseUser.generateEmailVerificationToken(user._id);
-            if (token) {
-                const url = `${URL}/verify/${token}`;
-                const message = `<h1>Please verify your email</h1>
-                    <p>Click on the link below to verify your email</p>
-                    <a href="${url}">${url}</a>`;
-                transport(req.user.email, 'Learnit Verification', message);
-                res.json({ message: 'success' });
-            } else {
-                res.json({ message: 'Unable to generate token' });
-            }
-            res.status(201).json({ success: true, message: 'success', user: { ...user, password: null } });
         });
     },
     login: (req, res) => {
@@ -118,5 +110,50 @@ module.exports = {
     },
     emailVerificationRedirct: async (req, res) => {
         res.redirect('http://localhost:3000/verify');
+    },
+    createCompany: async (req, res) => {
+        errorHandler(req, res, async () => {
+            const user = Recruiter.findOne({ user: req.user._id });
+            if (user) {
+                const company = await Company.create({ ...req.body, user: req.user._id });
+                res.status(201).json({ message: 'success', company });
+            } else {
+                res.status(400).json({ message: 'User is not a recruiter' });
+            }
+        });
+    },
+    sendJoinRequest: async (req, res) => {
+        errorHandler(req, res, async () => {
+            if (req.user) {
+                const { recruite } = req.body;
+                const token = await BaseUser.generateEmailVerificationToken(req.user ? req.user._id : req.body._id);
+                if (token) {
+                    const url = `${URL}/join?token=${token}&c=${req.body.company._id}`;
+                    const message = `<h1>Please Join using and select the time slot</h1>
+                        <p>Click on the link below to verify your email</p>
+                        <a href="${url}">${url}</a>`;
+                    transport(recruite.email, 'Email Join', message);
+                    res.json({ message: 'Email send' });
+                } else {
+                    res.json({ message: 'Unable to generate token', room: token.slice(token.length - 4) });
+                }
+            } else {
+                res.json({ message: 'User not found' });
+            }
+        });
+    },
+    joinRequestRedirect: async (req, res) => {
+        errorHandler(req, res, async () => {
+            const { token, c } = req.query;
+            if (await BaseUser.verifyEmailToken(req.user._id, token)) {
+                await Application.create({
+                    recruite: req.user._id,
+                    company: c,
+                });
+                res.redirect('http://localhost:3000/join');
+            } else {
+                res.json({ message: 'Token is not valid' });
+            }
+        });
     },
 };

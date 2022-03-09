@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { BaseUser, User } = require('../models/user');
+const { BaseUser } = require('../models/user');
 
 async function UserAuthentication(req, res, next) {
     if (req.cookies.jwt) {
@@ -11,8 +11,8 @@ async function UserAuthentication(req, res, next) {
             } else {
                 BaseUser.findOne({ user: id.id })
                     .then(async (user) => {
-                        console.log(user);
-                        req.user = await User.findOne({ user: user._id }).populate('BaseUser', '-password');
+                        console.log();
+                        req.user = user;
                         next();
                     })
                     .catch((erro) => console.log(erro));

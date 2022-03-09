@@ -3,23 +3,18 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const ApplicationSchema = new Schema({
-    user: {
+    recruite: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    job: {
-        type: Schema.Types.ObjectId,
-        ref: 'Job',
+        ref: 'Recruite',
     },
     status: {
         type: String,
         enum: ['Pending', 'Accepted', 'Rejected'],
         default: 'Pending',
     },
-    notes: {
-        type: String,
-        trim: true,
-        minlength: [10, 'Notes length less than 10'],
+    company: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Company',
     },
 }, {
     timestamps: true,

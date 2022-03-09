@@ -168,14 +168,6 @@ const RecruiteSchema = new Schema({
 });
 
 const RecruiterSchema = new Schema({
-    profileImage: {
-        type: String,
-        required: [true, 'Please provide an image'],
-        trim: true,
-        unique: true,
-        validate: [isURL, 'Please provide a valid link'],
-        default: 'http://via.placeholder.com/640x360',
-    },
     user: {
         type: mongoose.Types.ObjectId,
         ref: 'BaseUser',
@@ -192,10 +184,9 @@ const RecruiterSchema = new Schema({
         default: true,
     },
     company: {
-        type: String,
-        trim: true,
-        unique: true,
-        minlength: [5, 'Company name less than 5'],
+        type: mongoose.Types.ObjectId,
+        ref: 'Company',
+        required: [true, 'Please provide a company'],
     },
     location: {
         type: String,
@@ -203,25 +194,7 @@ const RecruiterSchema = new Schema({
         unique: true,
         enum: ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Fujairah', 'Ras Al Khaimah', 'Umm Al Quwain', 'Mumbai'],
     },
-    description: {
-        type: String,
-        trim: true,
-        minlength: [10, 'Bio length less than 10'],
-    },
-    raised: {
-        type: Number,
-        default: 0,
-    },
-    companySize: {
-        type: Number,
-        min: [1, 'Company size less than 1'],
-    },
-    website: {
-        type: String,
-        trim: true,
-        unique: true,
-        validate: [isURL, 'Invalid link'],
-    },
+    
 }, {
     timestamps: true,
 });

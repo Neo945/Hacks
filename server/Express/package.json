@@ -39,6 +39,8 @@
     "dependencies": {
         "aws-sdk": "^2.954.0",
         "bcrypt": "^5.0.1",
+        "dialogflow": "^1.2.0",
+        "dialogflow-fulfillment": "^0.6.1",
         "body-parser": "^1.19.0",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.5",

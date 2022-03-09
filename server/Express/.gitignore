@@ -25,3 +25,5 @@ src/static/images
 .babelrc
 
 cc.yml
+
+key.json

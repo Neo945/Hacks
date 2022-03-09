@@ -11,7 +11,7 @@ const ExperienceSchema = new Schema({
     },
     company: {
         type: mongoose.Types.ObjectId,
-        ref: 'Company',
+        ref: 'Recruiter',
     },
     from: {
         type: Date,
